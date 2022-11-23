@@ -1,34 +1,50 @@
-import React from 'react'
+import React, {useEffect , useState} from 'react'
+import { connect } from 'react-redux'
+import { fetchQuiz, selectAnswer } from '../state/action-creators'
 
-export default function Quiz(props) {
+function Quiz(props) {
+  const [disabled,setDisabled] = useState(true)
+  useEffect(()=>{
+    if (props.selectedAnswer) {
+      setDisabled(false)
+    } else {
+      setDisabled(true)
+    }
+  },[props.selectedAnswer])
+
+  useEffect(()=>props.fetchQuiz(),[])
+  // console.log(props)
   return (
     <div id="wrapper">
       {
         // quiz already in state? Let's use that, otherwise render "Loading next quiz..."
-        true ? (
+        props.quiz ? (
           <>
-            <h2>What is a closure?</h2>
+            <h2>{props.quiz.question}</h2>
 
             <div id="quizAnswers">
-              <div className="answer selected">
-                A function
-                <button>
-                  SELECTED
+              {props.quiz.answers.map(answer=>{
+                return (<div className={props.selectedAnswer === answer.answer_id ? "answer selected": "answer"} key={answer.answer_id}>
+                {answer.text}
+                <button onClick={()=>props.selectAnswer(answer.answer_id)}>
+                  {props.selectedAnswer === answer.answer_id ? "SELECTED" : "Select"}
                 </button>
-              </div>
-
-              <div className="answer">
-                An elephant
-                <button>
-                  Select
-                </button>
-              </div>
+              </div>)
+              })}
             </div>
 
-            <button id="submitAnswerBtn">Submit answer</button>
+            <button disabled={disabled} id="submitAnswerBtn">Submit answer</button>
           </>
-        ) : 'Loading next quiz...'
+        ) : <h2>{ 'Loading next quiz...' }</h2>
       }
     </div>
   )
 }
+const mapStateToProps =state =>{
+  return {
+    quiz: state.quiz,
+    selectedAnswer: state.selectedAnswer
+  }
+}
+
+export default connect(mapStateToProps,{fetchQuiz, selectAnswer})(Quiz)
