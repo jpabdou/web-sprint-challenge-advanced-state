@@ -12,7 +12,7 @@ function Quiz(props) {
     }
   },[props.selectedAnswer])
 
-  useEffect(()=>props.fetchQuiz(),[props.message])
+  useEffect(()=>props.fetchQuiz(),[])
   // console.log(props)
   return (
     <div id="wrapper">
