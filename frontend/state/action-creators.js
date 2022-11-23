@@ -24,15 +24,20 @@ export function fetchQuiz() {
       // console.log(res)
       dispatch(setQuiz(res.data))
     )
-    .catch(err => dispatch({ type: QUIZ_CALL_FAIL, payload: err }));
+    .catch(err => console.log(err));
     
     // First, dispatch an action to reset the quiz state (so the "Loading next quiz..." message can display)
     // On successful GET:
     // - Dispatch an action to send the obtained quiz to its state
   }
 }
-export function postAnswer() {
+export function postAnswer(obj) {
   return function (dispatch) {
+    axios.post(`http://localhost:9000/api/quiz/answer`,obj)
+    .then(res =>
+      dispatch(setMessage(res.data.message))
+    )
+    .catch(err => console.log(err));
     // On successful POST:
     // - Dispatch an action to reset the selected answer state
     // - Dispatch an action to set the server message to state

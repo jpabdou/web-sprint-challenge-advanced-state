@@ -1,6 +1,6 @@
 import React, {useEffect , useState} from 'react'
 import { connect } from 'react-redux'
-import { fetchQuiz, selectAnswer } from '../state/action-creators'
+import { fetchQuiz, selectAnswer, postAnswer } from '../state/action-creators'
 
 function Quiz(props) {
   const [disabled,setDisabled] = useState(true)
@@ -12,7 +12,7 @@ function Quiz(props) {
     }
   },[props.selectedAnswer])
 
-  useEffect(()=>props.fetchQuiz(),[])
+  useEffect(()=>props.fetchQuiz(),[props.message])
   // console.log(props)
   return (
     <div id="wrapper">
@@ -33,7 +33,7 @@ function Quiz(props) {
               })}
             </div>
 
-            <button disabled={disabled} id="submitAnswerBtn">Submit answer</button>
+            <button disabled={disabled} onClick={()=>props.postAnswer({"quiz_id": props.quiz.quiz_id, "answer_id": props.selectedAnswer})} id="submitAnswerBtn">Submit answer</button>
           </>
         ) : <h2>{ 'Loading next quiz...' }</h2>
       }
@@ -43,8 +43,9 @@ function Quiz(props) {
 const mapStateToProps =state =>{
   return {
     quiz: state.quiz,
-    selectedAnswer: state.selectedAnswer
+    selectedAnswer: state.selectedAnswer,
+    message: state.infoMessage
   }
 }
 
-export default connect(mapStateToProps,{fetchQuiz, selectAnswer})(Quiz)
+export default connect(mapStateToProps,{fetchQuiz, selectAnswer, postAnswer})(Quiz)
